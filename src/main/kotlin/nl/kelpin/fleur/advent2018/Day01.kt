@@ -5,7 +5,7 @@ class Day01(input: List<String>) {
 
     fun part1(): Int = ints.sum()
 
-    tailrec fun part2(encountered: MutableSet<Int> = mutableSetOf(), frequency: Int = 0, index: Int = 0): Int {
+    tailrec fun part2(encountered: MutableSet<Int> = mutableSetOf(0), frequency: Int = 0, index: Int = 0): Int {
         val newFrequency: Int = frequency + ints[index]
         return if (!encountered.add(newFrequency))
             newFrequency
