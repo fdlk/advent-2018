@@ -3,8 +3,8 @@ package nl.kelpin.fleur.advent2018
 data class TwosAndThrees(val twos: Int = 0, val threes: Int = 0) {
     constructor(id: String) : this(id.toCharArray().groupBy { it }.mapValues { it.value.size })
     constructor(occurrences: Map<Char, Int>) : this(
-            if (occurrences.values.find { it == 2 } != null) 1 else 0,
-            if (occurrences.values.find { it == 3 } != null) 1 else 0
+            if (occurrences.values.contains(2)) 1 else 0,
+            if (occurrences.values.contains(3)) 1 else 0
     )
 
     fun combinedWith(other: TwosAndThrees): TwosAndThrees = TwosAndThrees(
