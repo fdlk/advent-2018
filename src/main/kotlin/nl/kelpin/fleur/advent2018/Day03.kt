@@ -7,17 +7,23 @@ class Day03(input: List<String>) {
             return Claim(values[1], values[2].toInt(), values[3].toInt(), values[4].toInt(), values[5].toInt())
         }
     }
-    data class Claim(val id: String, val topLeftX: Int, val topLeftY: Int, val width: Int, val height: Int){
+
+    data class Claim(val id: String, val topLeftX: Int, val topLeftY: Int, val width: Int, val height: Int) {
         val xRange = topLeftX until topLeftX + width
         val yRange = topLeftY until topLeftY + height
         fun contains(x: Int, y: Int): Boolean = xRange.contains(x) && yRange.contains(y)
     }
-    val claims = input.map(::parse)
 
-    fun part1() =
-        (0..999).map { x ->
-            (0..999).count { y ->
-                claims.filter { it.contains(x,y) } .take(2).count() == 2
+    private val claims = input.map(::parse)
+    private val contested: List<Pair<Int, Int>> =
+            (0..999).flatMap { x ->
+                (0..999).mapNotNull { y ->
+                    if (claims.filter { it.contains(x, y) }.count() >= 2)
+                        Pair(x, y)
+                    else null
+                }
             }
-        }.sum()
+
+    fun part1() = contested.size
+    fun part2() = claims.find { claim -> contested.none { claim.contains(it.first, it.second) } }?.id
 }
