@@ -13,19 +13,12 @@ class Day03(input: List<String>) {
             }
         }
 
-        fun contains(x: Int, y: Int): Boolean = xRange.contains(x) && yRange.contains(y)
+        fun squares(): List<Pair<Int, Int>> = xRange.flatMap { x -> yRange.map { y -> Pair(x, y) } }
+        fun intersects(other: Claim): Boolean = xRange.overlaps(other.xRange) && yRange.overlaps(other.yRange)
     }
 
     private val claims = input.map(::parse)
-    private val contested: List<Pair<Int, Int>> =
-            (0..999).flatMap { x ->
-                (0..999).mapNotNull { y ->
-                    if (claims.filter { it.contains(x, y) }.count() >= 2)
-                        Pair(x, y)
-                    else null
-                }
-            }
 
-    fun part1() = contested.size
-    fun part2() = claims.find { claim -> contested.none { claim.contains(it.first, it.second) } }?.id
+    fun part1() = claims.flatMap(Claim::squares).groupBy { it }.count { it.value.size > 1 }
+    fun part2() = claims.find { claim -> claims.filter { it != claim }.none { claim.intersects(it) } }?.id
 }
