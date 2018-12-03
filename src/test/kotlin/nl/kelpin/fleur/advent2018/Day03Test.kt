@@ -4,8 +4,6 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 
 class Day03Test {
-    val day03 = Day03(resourceAsList("day03.txt"))
-
     @Test()
     fun `Parses input correctly`() {
         Assertions.assertThat(Day03.Claim.parse("#1 @ 935,649: 22x22"))
@@ -28,13 +26,9 @@ class Day03Test {
     }
 
     @Test()
-    fun `Part 1 solution`() {
+    fun `Part 1 and 2 solutions`() {
+        val day03 = Day03(resourceAsList("day03.txt"))
         println(day03.part1())
-    }
-
-    @Test()
-    fun `Part 2 solution`() {
         println(day03.part2())
     }
-
 }
