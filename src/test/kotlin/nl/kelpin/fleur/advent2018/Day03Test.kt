@@ -7,7 +7,7 @@ class Day03Test {
     @Test()
     fun `Parses input correctly`() {
         Assertions.assertThat(Day03.Claim.parse("#1 @ 935,649: 22x22"))
-                .isEqualTo(Day03.Claim("#1", 935, 649, 22, 22))
+                .isEqualTo(Day03.Claim(1, 935 until 957, 649 until 671))
     }
 
     @Test()
