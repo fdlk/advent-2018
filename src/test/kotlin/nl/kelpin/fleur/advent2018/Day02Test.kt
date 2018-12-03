@@ -4,16 +4,6 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 
 class Day02Test {
-    @Test()
-    fun `Counts twos and threes correctly`() {
-        Assertions.assertThat(TwosAndThrees("abcdef")).isEqualTo(TwosAndThrees(0, 0))
-        Assertions.assertThat(TwosAndThrees("bababc")).isEqualTo(TwosAndThrees(1, 1))
-        Assertions.assertThat(TwosAndThrees("abbcde")).isEqualTo(TwosAndThrees(1, 0))
-        Assertions.assertThat(TwosAndThrees("abcccd")).isEqualTo(TwosAndThrees(0, 1))
-        Assertions.assertThat(TwosAndThrees("aabcdd")).isEqualTo(TwosAndThrees(1, 0))
-        Assertions.assertThat(TwosAndThrees("abcdee")).isEqualTo(TwosAndThrees(1, 0))
-        Assertions.assertThat(TwosAndThrees("ababab")).isEqualTo(TwosAndThrees(0, 1))
-    }
 
     @Test()
     fun `Part 1 matches example`() {
