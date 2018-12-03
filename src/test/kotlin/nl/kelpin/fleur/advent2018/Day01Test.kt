@@ -1,35 +1,26 @@
 package nl.kelpin.fleur.advent2018
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Tag
 
 class Day01Test {
     @Test()
     fun `Part 1 matches example`() {
-        Assertions.assertThat(Day01(listOf("+1", "+1", "+1")).part1()).isEqualTo(3)
-        Assertions.assertThat(Day01(listOf("+1", "+1", "-2")).part1()).isEqualTo(0)
-        Assertions.assertThat(Day01(listOf("-1", "-2", "-3")).part1()).isEqualTo(-6)
+        assertThat(Day01(listOf("+1", "+1", "+1")).part1()).isEqualTo(3)
+        assertThat(Day01(listOf("+1", "+1", "-2")).part1()).isEqualTo(0)
+        assertThat(Day01(listOf("-1", "-2", "-3")).part1()).isEqualTo(-6)
     }
 
-    @Tags(
-            Tag("Solution"),
-            Tag("Day01"),
-            Tag("Part1")
-    )
+    @Tag("Solution")
     @Test()
     fun `Part 1 solution`() {
-        println(Day01(resourceAsList("day01.txt")).part1())
+        assertThat(Day01(resourceAsList("day01.txt")).part1()).isEqualTo(402)
     }
 
-    @Tags(
-            Tag("Solution"),
-            Tag("Day01"),
-            Tag("Part2")
-    )
+    @Tag("Solution")
     @Test()
     fun `Part 2 solution`() {
-        println(Day01(resourceAsList("day01.txt")).part2())
+        assertThat(Day01(resourceAsList("day01.txt")).part2()).isEqualTo(481)
     }
 }

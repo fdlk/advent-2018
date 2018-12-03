@@ -2,7 +2,6 @@ package nl.kelpin.fleur.advent2018
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Tag
-import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 
 class Day03Test {
@@ -28,14 +27,14 @@ class Day03Test {
         assertThat(squares.contains(Pair(8, 6))).isFalse()
     }
 
-    @Tags(Tag("Solution"))
+    @Tag("Solution")
     @Test()
     fun `Part 1 solution`() {
         val day03 = Day03(resourceAsList("day03.txt"))
         assertThat(day03.part1()).isEqualTo(111326)
     }
 
-    @Tags(Tag("Solution"))
+    @Tag("Solution")
     @Test()
     fun `Part 2 solution`() {
         val day03 = Day03(resourceAsList("day03.txt"))
