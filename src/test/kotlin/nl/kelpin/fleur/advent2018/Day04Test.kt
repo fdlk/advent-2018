@@ -8,7 +8,7 @@ class Day04Test {
     @Test
     fun `Parse start of shift`() {
         val line = "[1518-02-10 23:47] Guard #631 begins shift"
-        assertThat(Day04.processLine(Day04.Status(), line)).isEqualTo(Day04.Status().beginShift(631))
+        assertThat(Day04.processLine(Day04.State(), line)).isEqualTo(Day04.State().beginShift(631))
     }
 
     @Test

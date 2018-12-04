@@ -1,53 +1,43 @@
 package nl.kelpin.fleur.advent2018
 
-class Day04(val input: List<String>) {
+typealias GuardID = Int
+typealias Minute = Int
 
-    data class Nap(val guard: Int, val minutes: IntRange)
-    data class Status(val guard: Int? = null, val napStarted: Int? = null, val naps: List<Nap> = listOf()) {
-        fun beginShift(newGuard: Int) = copy(guard = newGuard, napStarted = null)
+class Day04(input: List<String>) {
+    data class Nap(val guard: GuardID, val minutes: IntRange)
+
+    data class State(val guard: GuardID? = null, val napStarted: Int? = null, val naps: List<Nap> = listOf()) {
+        fun beginShift(newGuard: GuardID) = copy(guard = newGuard, napStarted = null)
         fun fallAsleep(minutes: Int) = copy(napStarted = minutes)
         fun wakeUp(minutes: Int) = copy(napStarted = null, naps = naps + Nap(guard!!, napStarted!! until minutes))
     }
 
     companion object {
-        val beginShiftRE = Regex(""".*Guard #(\d+) begins shift""")
-        val fallAsleepRE = Regex(""".*00:(\d{2})] falls asleep""")
-        val wakesUpRE = Regex(""".*00:(\d{2})] wakes up""")
+        private val beginShiftRE = Regex(""".*Guard #(\d+) begins shift""")
+        private val fallAsleepRE = Regex(""".*00:(\d{2})] falls asleep""")
+        private val wakesUpRE = Regex(""".*00:(\d{2})] wakes up""")
+        private fun MatchResult.intMatch(): Int = destructured.component1().toInt()
 
-        fun processLine(status: Status, line: String): Status = when {
-            line.matches(beginShiftRE) -> beginShiftRE.find(line)!!.destructured.let { (guardId) -> status.beginShift(guardId.toInt()) }
-            line.matches(fallAsleepRE) -> fallAsleepRE.find(line)!!.destructured.let { (minutes) -> status.fallAsleep(minutes.toInt()) }
-            line.matches(wakesUpRE) -> wakesUpRE.find(line)!!.destructured.let { (minutes) -> status.wakeUp(minutes.toInt()) }
+        fun processLine(status: State, line: String): State = when {
+            line.matches(beginShiftRE) -> beginShiftRE.find(line)!!.intMatch().run(status::beginShift)
+            line.matches(fallAsleepRE) -> fallAsleepRE.find(line)!!.intMatch().run(status::fallAsleep)
+            line.matches(wakesUpRE) -> wakesUpRE.find(line)!!.intMatch().run(status::wakeUp)
             else -> throw IllegalArgumentException("Failed to parse: $line")
         }
     }
 
-    val naps = input.sorted().fold(Status(), ::processLine).naps.groupBy { it.guard }
+    private val guardNaps: Map<GuardID, List<Minute>> = input
+            .sorted()
+            .fold(State(), ::processLine).naps
+            .groupBy { it.guard }
+            .mapValues { it.value.flatMap { it.minutes } }
 
-    fun part1(): Int {
-        val guard = naps
-                .maxBy { it.value.map { it.minutes.length() }.sum() }!!
-                .key
-        val minute = naps[guard]!!
-                .flatMap { it.minutes.toList() }
-                .groupingBy { it }
-                .eachCount()
-                .maxBy { it.value }!!
-                .key
-        return guard * minute
-    }
+    fun part1(): Int = guardNaps
+            .maxBy { it.value.size }!!
+            .let { (guardID: GuardID, minutes: List<Minute>) -> guardID * minutes.mostFrequent().element }
 
-    fun part2(): Int {
-        val guardWhoSleptMost = naps
-                .mapValues {
-                    it.value.flatMap { it.minutes.toList() }
-                            .groupingBy { it }
-                            .eachCount()
-                            .maxBy { it.value }
-
-                }.maxBy { it.value!!.value }!!
-        val guard = guardWhoSleptMost.key
-        val minuteSleptMost = guardWhoSleptMost.value!!.key
-        return guard * minuteSleptMost
-    }
+    fun part2(): Int = guardNaps
+            .mapValues { it.value.mostFrequent() }
+            .maxBy { it.value.occurrence }!!
+            .let { (guardID: GuardID, mostFrequent: Frequency<Minute>) -> guardID * mostFrequent.element }
 }
