@@ -7,3 +7,5 @@ fun String.matchingChars(other: String): String =
 
 fun IntRange.overlaps(other: IntRange): Boolean =
     start <= other.endInclusive && other.start <= endInclusive
+
+fun IntRange.length(): Int = endInclusive - start
