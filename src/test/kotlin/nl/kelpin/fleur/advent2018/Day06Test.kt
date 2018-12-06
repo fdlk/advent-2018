@@ -50,6 +50,22 @@ class Day06Test {
     @Tag("Solution")
     @Test
     fun `Part 1 solution`() {
-        assertThat(actual.part1()).isEqualTo(17)
+        assertThat(actual.part1()).isEqualTo(5365)
+    }
+
+    @Test
+    fun `Total distance`() {
+        assertThat(sample.totalDistance(Point(4,3))).isEqualTo(30)
+    }
+
+    @Test
+    fun `Part 2 sample data`() {
+        assertThat(sample.part2(32)).isEqualTo(16)
+    }
+
+    @Tag("Solution")
+    @Test
+    fun `Part 2 solution`() {
+        assertThat(actual.part2(10_000)).isEqualTo(42513)
     }
 }

@@ -12,6 +12,9 @@ class Day06(input: List<String>) {
         return if (a.distanceTo(p) == b.distanceTo(p)) null else a
     }
 
+    fun totalDistance(p: Point): Int = points.map { it.distanceTo(p) }.sum()
+    fun points(): Iterable<Point> = xRange.flatMap { x -> yRange.map { y -> Point(x, y) } }
+
     fun edgePoints(): Set<Point> {
         val bottomAndTop = xRange.flatMap { x ->
             setOf(
@@ -31,7 +34,7 @@ class Day06(input: List<String>) {
 
     fun part1(): Int? {
         val edgePoints:Set<Point> = edgePoints()
-        return xRange.flatMap { x -> yRange.map { y -> closestPoint(Point(x, y)) } }
+        return points().map(::closestPoint)
                 .filterNotNull()
                 .filter{!edgePoints.contains(it)}
                 .groupingBy { it }
@@ -39,4 +42,6 @@ class Day06(input: List<String>) {
                 .values
                 .max()
     }
+
+    fun part2(threshold: Int): Int = points().toSet().map(::totalDistance).count{it < threshold}
 }
