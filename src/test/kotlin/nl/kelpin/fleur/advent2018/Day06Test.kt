@@ -24,8 +24,8 @@ class Day06Test {
 
     @Test
     fun `ranges`() {
-        assertThat(sample.xRange).isEqualTo(0..9)
-        assertThat(sample.yRange).isEqualTo(0..10)
+        assertThat(sample.xRange).isEqualTo(1..8)
+        assertThat(sample.yRange).isEqualTo(1..9)
     }
 
     @Test

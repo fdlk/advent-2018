@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class Day05Test {
     @Test
     fun `Replace aBbA`() {
-        assertThat(Day05.replaced("aBbA")).isEqualTo("aA")
+        assertThat(Day05.replaced("aBbA")).isEqualTo("")
     }
 
     @Test
@@ -17,7 +17,7 @@ class Day05Test {
 
     @Test
     fun `Replace aBbBbA`() {
-        assertThat(Day05.replaced("aBbBbA")).isEqualTo("aA")
+        assertThat(Day05.replaced("aBbBbA")).isEqualTo("")
     }
 
     @Test
