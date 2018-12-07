@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 class Day07Test {
     companion object {
-        val sample = Day07(resourceAsList("day07-sample.txt"))
+        val sample = Day07(resourceAsList("day07-sample.txt"), 0, 2)
         val actual = Day07(resourceAsList("day07.txt"))
     }
 
@@ -38,5 +38,16 @@ class Day07Test {
     @Test
     fun `Part 1 solution`() {
         assertThat(actual.part1()).isEqualTo("ADEFKLBVJQWUXCNGORTMYSIHPZ")
+    }
+
+    @Test
+    fun `Part 2 sample data`() {
+        assertThat(sample.part2()).isEqualTo(15)
+    }
+
+    @Tag("Solution")
+    @Test
+    fun `Part 2 solution`() {
+        assertThat(actual.part2()).isEqualTo(1120)
     }
 }
