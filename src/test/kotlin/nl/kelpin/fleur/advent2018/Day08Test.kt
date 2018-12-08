@@ -31,4 +31,30 @@ class Day08Test {
         assertThat(actual.part1()).isEqualTo(42798)
     }
 
+    @Test
+    fun `parses tree`() {
+        assertThat(sample.tree).isEqualTo(
+                Day08.Node(listOf(
+                        Day08.Node(emptyList(), listOf(10, 11, 12)),
+                        Day08.Node(listOf(
+                                Day08.Node(emptyList(), listOf(99))
+                        ), listOf(2))),
+                        listOf(1, 1, 2)))
+    }
+
+    @Test
+    fun `value no children`() {
+        assertThat(Day08.Node(emptyList(), listOf(10, 11, 12)).value()).isEqualTo(33)
+    }
+
+    @Test
+    fun `Part 2 sample input`() {
+        assertThat(sample.part2()).isEqualTo(66)
+    }
+
+    @Tag("Solution")
+    @Test
+    fun `Part 2`() {
+        assertThat(actual.part2()).isEqualTo(23798)
+    }
 }
