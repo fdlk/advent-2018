@@ -1,0 +1,50 @@
+package nl.kelpin.fleur.advent2018
+
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Tag
+
+class Day09Test {
+
+    @Test
+    fun `circular next and previous`() {
+        val day09 = Day09(0, 0)
+        day09.iterator.add(0)
+        day09.iterator.add(1)
+        day09.iterator.add(2)
+        assertThat(day09.circularNext() == 0)
+        assertThat(day09.circularNext() == 1)
+        assertThat(day09.circularNext() == 2)
+        assertThat(day09.circularNext() == 0)
+        assertThat(day09.circularPrevious() == 0)
+        assertThat(day09.circularPrevious() == 2)
+        assertThat(day09.circularPrevious() == 1)
+        assertThat(day09.circularPrevious() == 0)
+    }
+
+    @Test
+    fun `Test Example part 1`() {
+        assertThat(Day09(9, 25).highscore()).isEqualTo(32)
+    }
+
+    @Test
+    fun `Test other examples part 1`() {
+        assertThat(Day09(10, 1618).highscore()).isEqualTo(8317)
+        assertThat(Day09(13, 7999).highscore()).isEqualTo(146373)
+        assertThat(Day09(17, 1104).highscore()).isEqualTo(2764)
+        assertThat(Day09(21, 6111).highscore()).isEqualTo(54718)
+        assertThat(Day09(30, 5807).highscore()).isEqualTo(37305)
+    }
+
+    @Tag("Solution")
+    @Test
+    fun `Solution part 1`() {
+        assertThat(Day09(403, 71920).highscore()).isEqualTo(439089L)
+    }
+
+    @Tag("Solution")
+    @Test
+    fun `Solution part 2`() {
+        assertThat(Day09(403, 7192000).highscore()).isEqualTo(3668541094L)
+    }
+}
