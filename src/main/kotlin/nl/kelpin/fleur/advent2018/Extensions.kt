@@ -1,5 +1,7 @@
 package nl.kelpin.fleur.advent2018
 
+import java.util.*
+
 fun String.matchingChars(other: String): String =
     this.zip(other).filter { it.first == it.second }
         .map { it.first }
@@ -18,3 +20,8 @@ fun <T> Collection<T>.mostFrequent(): Frequency<T> {
 }
 
 fun List<Int>.range(): IntRange = min()!!..max()!!
+
+fun <T> Deque<T>.cycle(n: Int) {
+    repeat(n) { addLast(removeFirst()) }
+    repeat(-n) { addFirst(removeLast()) }
+}
