@@ -7,19 +7,16 @@ import org.junit.jupiter.api.Tag
 class Day09Test {
 
     @Test
-    fun `circular next and previous`() {
-        val day09 = Day09(0, 0)
-        day09.iterator.add(0)
-        day09.iterator.add(1)
-        day09.iterator.add(2)
-        assertThat(day09.circularNext() == 0)
-        assertThat(day09.circularNext() == 1)
-        assertThat(day09.circularNext() == 2)
-        assertThat(day09.circularNext() == 0)
-        assertThat(day09.circularPrevious() == 0)
-        assertThat(day09.circularPrevious() == 2)
-        assertThat(day09.circularPrevious() == 1)
-        assertThat(day09.circularPrevious() == 0)
+    fun `Marbles circular next and previous`() {
+        val marbles = Day09.Marbles(listOf(0, 1, 2))
+        assertThat(marbles.circularNext() == 0)
+        assertThat(marbles.circularNext() == 1)
+        assertThat(marbles.circularNext() == 2)
+        assertThat(marbles.circularNext() == 0)
+        assertThat(marbles.circularPrevious() == 0)
+        assertThat(marbles.circularPrevious() == 2)
+        assertThat(marbles.circularPrevious() == 1)
+        assertThat(marbles.circularPrevious() == 0)
     }
 
     @Test
