@@ -31,6 +31,6 @@ class Day14Test {
     @Test
     @Tag("Solution")
     fun `Part 2 solution`() {
-        assertThat(Day14().part2("077201")).isEqualTo("20357548")
+        assertThat(Day14().part2("077201")).isEqualTo(20357548)
     }
 }
