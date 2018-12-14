@@ -1,13 +1,13 @@
 package nl.kelpin.fleur.advent2018
 
 class Day14 {
-    val scores = sequence {
+    private val scores = sequence {
         var elf1 = 0
         var elf2 = 1
-        val scores = mutableListOf(3, 7)
+        val scores: MutableList<Byte> = mutableListOf(3, 7)
         yieldAll(scores)
         while (true) {
-            val digits: List<Int> = (scores[elf1] + scores[elf2]).toString().map(Char::asDigit)
+            val digits: List<Byte> = (scores[elf1] + scores[elf2]).toString().map(Char::asDigit)
             scores.addAll(digits)
             yieldAll(digits)
             elf1 = (elf1 + 1 + scores[elf1]) % scores.size

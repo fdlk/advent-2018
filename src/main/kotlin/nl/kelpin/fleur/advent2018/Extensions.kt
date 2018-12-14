@@ -27,5 +27,4 @@ fun <T> Deque<T>.cycle(n: Int) {
     repeat(-n) { addFirst(removeLast()) }
 }
 
-fun Int.asChar() = '0' + this
-fun Char.asDigit() = if (isDigit()) this - '0' else throw IllegalArgumentException()
+fun Char.asDigit() = if (isDigit()) (this - '0').toByte() else throw IllegalArgumentException()
