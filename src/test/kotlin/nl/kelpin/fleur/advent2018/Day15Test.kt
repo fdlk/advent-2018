@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Test
 
 class Day15Test {
     val actual = Day15(resourceAsList("day15.txt"))
+    val sampleClosest = Day15(resourceAsList("day15-sample-closest.txt"))
+    val sample0 = Day15(resourceAsList("day15-sample0.txt"))
     val sample = Day15(resourceAsList("day15-sample.txt"))
     val sample2 = Day15(resourceAsList("day15-sample2.txt"))
+    val sample25 = Day15(resourceAsList("day15-sample25.txt"))
     val sample3 = Day15(resourceAsList("day15-sample3.txt"))
     val sample4 = Day15(resourceAsList("day15-sample4.txt"))
     val sample5 = Day15(resourceAsList("day15-sample5.txt"))
@@ -18,7 +21,7 @@ class Day15Test {
 
     @Test
     fun `xRange, yRange and isOpen produce same cave`() {
-        assertThat(actual.mapWith(emptySet())).isEqualTo(actual.cave)
+        assertThat(actual.mapWith(emptySet())).isEqualTo(actual.cave.joinToString("\n"))
     }
 
     @Test
@@ -43,22 +46,28 @@ class Day15Test {
     }
 
     @Test
+    fun `closestTarget`() {
+        val gnomes = sampleClosest.initialCritters.filter { it.type == 'G' }
+        val closestTarget = sampleClosest.closestTarget(gnomes.map { it.location }.toSet(), gnomes.map { it.location }.toSet())
+        assertThat(closestTarget).isEqualTo(Point(3, 1))
+    }
+
+    @Test
     fun `sample elf move`() {
-        val gnomes = sample.initialCritters.filter { it.type == 'G' }
-        val elf = sample.initialCritters.filter { it.type == 'E' }.first()
+        val gnomes = sample0.initialCritters.filter { it.type == 'G' }
+        val elf = sample0.initialCritters.filter { it.type == 'E' }.first()
         val expected = elf.location.move(Up)
 
-        assertThat(sample.move(elf, gnomes.map { it.location }.toSet(), emptySet())).isEqualTo(expected)
+        assertThat(sample0.move(elf, gnomes.map { it.location }.toSet(), emptySet())).isEqualTo(expected)
     }
 
     @Test
     fun `sample gnome moves`() {
-        val gnomes = sample.initialCritters.filter { it.type == 'G' }
-        val elves = sample.initialCritters.filter { it.type == 'E' }
+        val gnomes = sample0.initialCritters.filter { it.type == 'G' }
+        val elves = sample0.initialCritters.filter { it.type == 'E' }
 
         assertThat(gnomes.take(3).map {
-            sample.move(Day15.Critter(it.location, 'G'),
-                    elves.map { it.location }.toSet(), gnomes.map { it.location }.toSet())
+            sample0.move(it, elves.map { it.location }.toSet(), gnomes.map { it.location }.toSet())
         }).isEqualTo(listOf(
                 Point(2, 1),
                 Point(4, 2),
@@ -67,12 +76,12 @@ class Day15Test {
 
     @Test
     fun `next`() {
-        var critters = sample.initialCritters
+        var critters = sample0.initialCritters
         for (i in 1..47) {
-            critters = sample.nextRound(critters).second
+            critters = sample0.nextRound(critters).second
             println(i)
-            println(sample.mapWith(critters))
-            println(critters.sortedWith(sample.critterComparison).map { "${it.type}(${it.hitPoints})" }.joinToString())
+            println(sample0.mapWith(critters))
+            println(critters.sortedWith(sample0.critterComparison).map { "${it.type}(${it.hitPoints})" }.joinToString())
         }
     }
 
@@ -91,6 +100,7 @@ class Day15Test {
     fun `Part 1 Sample inputs`() {
         assertThat(sample.part1()).isEqualTo(27730)
         assertThat(sample2.part1()).isEqualTo(36334)
+        assertThat(sample25.part1()).isEqualTo(39514)
         assertThat(sample3.part1()).isEqualTo(27755)
         assertThat(sample4.part1()).isEqualTo(28944)
         assertThat(sample5.part1()).isEqualTo(18740)
@@ -98,8 +108,11 @@ class Day15Test {
 
     @Test
     fun `Solution Part 1`() {
-        // 226960 is too high
-        // 224123 is too high
-        assertThat(actual.part1()).isEqualTo(224123)
+        assertThat(actual.part1()).isEqualTo(221754)
+    }
+
+    @Test
+    fun `Solution Part 2`() {
+        assertThat(actual.part2()).isEqualTo(41972)
     }
 }
