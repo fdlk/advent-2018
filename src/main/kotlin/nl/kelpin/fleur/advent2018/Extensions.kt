@@ -10,7 +10,7 @@ fun String.matchingChars(other: String): String =
 fun IntRange.overlaps(other: IntRange): Boolean =
         start <= other.endInclusive && other.start <= endInclusive
 
-fun IntRange.length(): Int = endInclusive - start
+fun IntRange.length(): Int = endInclusive - start + 1
 
 // Frequency counting
 data class Frequency<T>(val element: T, val occurrence: Int)
