@@ -2,22 +2,14 @@ package nl.kelpin.fleur.advent2018
 
 import arrow.syntax.function.memoize
 
-sealed class Type(private val name: String) {
-    abstract fun isCompatibleWith(tool: Tool): Boolean
+sealed class Type(private val name: String, private val incompatibleWith: Tool) {
+    fun isCompatibleWith(tool: Tool) = tool != incompatibleWith
     override fun toString(): String = name
 }
 
-object Rocky : Type("Rocky") {
-    override fun isCompatibleWith(tool: Tool) = tool != Neither
-}
-
-object Wet : Type("Wet") {
-    override fun isCompatibleWith(tool: Tool) = tool != Torch
-}
-
-object Narrow : Type("Narrow") {
-    override fun isCompatibleWith(tool: Tool) = tool != ClimbingGear
-}
+object Rocky : Type("Rocky", Neither)
+object Wet : Type("Wet", Torch)
+object Narrow : Type("Narrow", ClimbingGear)
 
 sealed class Tool(private val name: String) {
     override fun toString(): String = name
@@ -27,9 +19,8 @@ object Neither : Tool("Neither")
 object ClimbingGear : Tool("Climbing Gear")
 object Torch : Tool("Torch")
 
-data class State(val point: Point, val tool: Tool)
-
-class Day22(val depth: Int, val target: Point) : Grid<State> {
+class Day22(val depth: Int, val target: Point) : Grid<Day22.State> {
+    data class State(val point: Point, val tool: Tool)
     companion object {
         val mouth = Point(0, 0)
     }
@@ -66,7 +57,11 @@ class Day22(val depth: Int, val target: Point) : Grid<State> {
             from.point.distanceTo(to.point) * costToMove +
                     if (from.tool != to.tool) costToSwitchTool else 0
 
-    fun getNeighbours(point: Point): List<Point> = with(point) {
+    override fun moveCost(from: State, to: State): Int =
+            if (from.tool == to.tool) costToMove
+            else costToSwitchTool
+
+    private fun getNeighbours(point: Point): List<Point> = with(point) {
         listOf(move(Down), move(Right), move(Left), move(Up))
                 .filter { it.x >= 0 && it.y >= 0 }
     }
@@ -82,9 +77,6 @@ class Day22(val depth: Int, val target: Point) : Grid<State> {
                 .map { state.copy(tool = it) })
         return result
     }
-
-    override fun moveCost(from: State, to: State): Int =
-            if (from.tool == to.tool) costToMove else costToSwitchTool
 
     fun part2(): Int = aStarSearch(State(mouth, Torch), State(target, Torch), this)
 }
