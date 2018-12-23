@@ -21,6 +21,7 @@ fun <T> Collection<T>.mostFrequent(): Frequency<T> {
 }
 
 fun List<Int>.range(): IntRange = min()!!..max()!!
+fun List<Int>.progression(n: Int): IntProgression = min()!!..max()!! step n
 
 fun <T> Deque<T>.cycle(n: Int) {
     repeat(n) { addLast(removeFirst()) }
