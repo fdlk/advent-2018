@@ -23,6 +23,8 @@ class Day22(val depth: Int, val target: Point) : Grid<Day22.State> {
     data class State(val point: Point, val tool: Tool)
     companion object {
         val mouth = Point(0, 0)
+        private const val COST_TO_MOVE = 1
+        private const val COST_TO_SWITCH_TOOL = 7
     }
 
     fun geologicIndex(point: Point): Int = with(point) {
@@ -50,16 +52,13 @@ class Day22(val depth: Int, val target: Point) : Grid<Day22.State> {
         (mouth.x..target.x).map { x -> Point(x, y) }
     }.sumBy(::risk)
 
-    private val costToMove = 1
-    private val costToSwitchTool = 7
-
     override fun heuristicDistance(from: State, to: State): Int =
-            from.point.distanceTo(to.point) * costToMove +
-                    if (from.tool != to.tool) costToSwitchTool else 0
+            from.point.distanceTo(to.point) * COST_TO_MOVE +
+                    if (from.tool != to.tool) COST_TO_SWITCH_TOOL else 0
 
     override fun moveCost(from: State, to: State): Int =
-            if (from.tool == to.tool) costToMove
-            else costToSwitchTool
+            if (from.tool == to.tool) COST_TO_MOVE
+            else COST_TO_SWITCH_TOOL
 
     private fun getNeighbours(point: Point): List<Point> = with(point) {
         listOf(move(Down), move(Right), move(Left), move(Up))

@@ -24,6 +24,10 @@ object Right : Direction()
 data class Point3D(val x: Int, val y: Int, val z: Int) {
     fun distanceTo(other: Point3D): Int = Math.abs(other.x - x) + Math.abs(other.y - y) + Math.abs(other.z - z)
     fun plus(other: Point3D): Point3D = Point3D(x + other.x, y + other.y, z + other.z)
+    fun minus(other: Point3D): Point3D = plus(other.times(-1))
     fun div(n: Int) = Point3D(x / n, y / n, z / n)
     fun times(n: Int): Point3D = Point3D(x * n, y * n, z * n)
+    fun outer(other: Point3D): Point3D =Point3D(y * other.z - z * other.y,
+                z * other.x - x * other.z,
+                x * other.y - y * other.x)
 }
