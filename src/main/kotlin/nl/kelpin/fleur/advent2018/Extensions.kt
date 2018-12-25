@@ -28,4 +28,15 @@ fun <T> Deque<T>.cycle(n: Int) {
     repeat(-n) { addFirst(removeLast()) }
 }
 
+fun <T> MutableList<T>.update(from: T, to: T?) {
+    if (to == null) {
+        remove(from)
+    } else {
+        val index = indexOf(from)
+        if (index != -1) {
+            this[index] = to
+        }
+    }
+}
+
 fun Char.asDigit() = if (isDigit()) (this - '0').toByte() else throw IllegalArgumentException()

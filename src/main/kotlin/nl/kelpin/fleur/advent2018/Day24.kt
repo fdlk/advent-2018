@@ -82,7 +82,7 @@ class Day24(immune: List<String>, infection: List<String>) {
 
     data class State(val groups: List<Group>) {
 
-        fun targetSelection(): Map<String, String?> {
+        fun targetSelection(): Map<String, Group?> {
             val attackers = groups.sortedWith(mostEffectivePowerThenHighestInitiative).toMutableList()
             val targets = attackers.toMutableList()
 
@@ -91,7 +91,7 @@ class Day24(immune: List<String>, infection: List<String>) {
                 if (target != null) {
                     targets.remove(target)
                 }
-                target?.getId()
+                target
             }
         }
 
@@ -103,21 +103,10 @@ class Day24(immune: List<String>, infection: List<String>) {
             val result = groups.toMutableList()
             while (!attackers.isEmpty()) {
                 val attacker = attackers.removeAt(0)
-                val targetId = targetSelection[attacker.getId()] ?: continue
-                val target = result.find { it.getId() == targetId }!!
-                result.remove(target)
-                val attackerTargetIndex = attackers.indexOf(target)
+                val target = targetSelection[attacker.getId()] ?: continue
                 val attackedTarget = target.attackedBy(attacker)
-                if (attackerTargetIndex != -1) {
-                    if (attackedTarget == null) {
-                        attackers.removeAt(attackerTargetIndex)
-                    } else {
-                        attackers[attackerTargetIndex] = attackedTarget
-                    }
-                }
-                if (attackedTarget != null) {
-                    result.add(attackedTarget)
-                }
+                result.update(target, attackedTarget)
+                attackers.update(target, attackedTarget)
             }
             return State(result)
         }

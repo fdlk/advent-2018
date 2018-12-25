@@ -46,7 +46,7 @@ class Day24Test {
 
     @Test
     fun `Target selection`() {
-        assertThat(Day24.State(sample.groups).targetSelection()).isEqualTo(
+        assertThat(Day24.State(sample.groups).targetSelection().mapValues{it.value?.getId()}).isEqualTo(
                 mapOf("infection #2" to "immune #2",
                         "immune #2" to "infection #1",
                         "immune #1" to "infection #2",
