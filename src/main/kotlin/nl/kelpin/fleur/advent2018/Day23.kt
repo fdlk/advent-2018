@@ -1,5 +1,8 @@
 package nl.kelpin.fleur.advent2018
 
+import arrow.syntax.function.memoize
+import java.util.*
+
 class Day23(input: List<String>) {
     companion object {
         val origin = Point3D(0, 0, 0)
@@ -7,9 +10,9 @@ class Day23(input: List<String>) {
 
     data class Sphere(val pos: Point3D, val r: Int) {
         companion object {
-            val regex = Regex("""pos=<(-?\d+),(-?\d+),(-?\d+)>, r=(\d+)""")
+            private val regex = Regex("""pos=<(-?\d+),(-?\d+),(-?\d+)>, r=(\d+)""")
             fun of(input: String): Sphere {
-                val (x: kotlin.String, y, z, r) = regex.matchEntire(input)!!.destructured
+                val (x, y, z, r) = regex.matchEntire(input)!!.destructured
                 return Sphere(Point3D(x.toInt(), y.toInt(), z.toInt()), r.toInt())
             }
         }
@@ -17,41 +20,51 @@ class Day23(input: List<String>) {
         fun contains(point: Point3D) = pos.distanceTo(point) <= r
     }
 
-    val spheres: List<Sphere> = input.map(Sphere.Companion::of)
+    private val spheres: List<Sphere> = input.map(Sphere.Companion::of)
 
     fun part1(): Int {
         val largest = spheres.maxBy { it.r }!!
-        return spheres.count { it.contains(largest.pos) }
+        return spheres.count { largest.contains(it.pos) }
     }
 
-    fun pointsToCheck(n: Int, points: List<Point3D>): List<Point3D> =
-            points.map { it.x }.progression(n).flatMap { x ->
-                points.map { it.y }.progression(n).flatMap { y ->
-                    points.map { it.z }.progression(n).map { z ->
-                        Point3D(x, y, z)
-                    }
-                }
+    data class Box(val xs: IntRange, val ys: IntRange, val zs: IntRange) {
+        fun distanceFrom(point: Point3D): Int = with(point) { xs.distance(x) + ys.distance(y) + zs.distance(z) }
+
+        fun contains(point: Point3D): Boolean = distanceFrom(point) == 0
+
+        fun overlaps(sphere: Sphere): Boolean = distanceFrom(sphere.pos) <= sphere.r
+
+        fun dimension(): Point3D = Point3D(xs.length(), ys.length(), zs.length())
+
+        fun split(): Set<Box> = xs.split().flatMap { newXs ->
+            ys.split().flatMap { newYs ->
+                zs.split().map { newZs -> Box(newXs, newYs, newZs) }
             }
+        }.toSet()
 
-    tailrec fun part2(resolution: Int = 1, center: Point3D? = null): Int {
-        val points: List<Point3D>?
+        fun stretch(factor: Float): Box = Box(xs.stretch(factor), ys.stretch(factor), zs.stretch(factor))
+    }
 
-        if (center == null)
-            points = spheres.map { it.pos }
-        else {
-            points = listOf(
-                    center.plus(Point3D(-1, -1, -1).times(resolution * 15)),
-                    center.plus(Point3D(1, 1, 1).times(resolution * 15)))
+    val overlappingSpheres = { box: Box -> spheres.count(box::overlaps) }.memoize()
+
+    tailrec fun initialBox(box: Box = Box(spheres.map { it.pos.x }.range(),
+            spheres.map { it.pos.y }.range(),
+            spheres.map { it.pos.z }.range())): Box =
+            if (overlappingSpheres(box) == spheres.size) box
+            else initialBox(box.stretch(1.1f))
+
+    fun part2(): Int? {
+        val queue: PriorityQueue<Box> = PriorityQueue(
+                compareByDescending(overlappingSpheres).then(compareBy { it.distanceFrom(origin) }))
+        queue.add(initialBox())
+        while (!queue.isEmpty()) {
+            val box = queue.poll()
+            println("overlaps = ${overlappingSpheres(box)}, size = ${box.dimension()}")
+            if (box.dimension() == Point3D(1, 1, 1)) {
+                return box.distanceFrom(origin)
+            }
+            queue.addAll(box.split())
         }
-
-        val counts = pointsToCheck(resolution, points)
-                .associateWith { point -> spheres.count { it.contains(point) } }
-        val maxCount = counts.values.max()
-        val filteredCounts = counts.filterValues { it == maxCount }
-        val closestFound = filteredCounts.minBy { it.key.distanceTo(origin) }!!.key
-        if (resolution == 1)
-            return closestFound.distanceTo(origin)
-        else
-            return part2(resolution / 10, closestFound)
+        return null
     }
 }

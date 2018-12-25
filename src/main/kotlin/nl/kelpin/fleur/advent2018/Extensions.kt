@@ -1,7 +1,6 @@
 package nl.kelpin.fleur.advent2018
 
 import java.util.*
-import java.util.function.Predicate
 
 fun String.matchingChars(other: String): String =
         this.zip(other).filter { it.first == it.second }
@@ -13,6 +12,21 @@ fun IntRange.overlaps(other: IntRange): Boolean =
 
 fun IntRange.length(): Int = endInclusive - start + 1
 
+fun IntRange.split(): Set<IntRange> =
+        if (endInclusive == start)
+            setOf(this)
+        else {
+            val halfWay = start + (endInclusive - start) / 2
+            setOf(start .. halfWay, halfWay+1..endInclusive)
+        }
+
+fun IntRange.distance(x: Int) = when{
+    contains(x) -> 0
+    x < start -> start - x
+    else -> x - endInclusive
+}
+
+
 // Frequency counting
 data class Frequency<T>(val element: T, val occurrence: Int)
 
@@ -22,7 +36,10 @@ fun <T> Collection<T>.mostFrequent(): Frequency<T> {
 }
 
 fun List<Int>.range(): IntRange = min()!!..max()!!
-fun List<Int>.progression(n: Int): IntProgression = min()!!..max()!! step n
+fun IntRange.stretch(factor: Float): IntRange {
+    val diff = ((endInclusive - start) * factor).toInt()
+    return (start - diff) .. (endInclusive + diff)
+}
 
 fun <T> Deque<T>.cycle(n: Int) {
     repeat(n) { addLast(removeFirst()) }
