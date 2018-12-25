@@ -1,6 +1,7 @@
 package nl.kelpin.fleur.advent2018
 
 import java.util.*
+import java.util.function.Predicate
 
 fun String.matchingChars(other: String): String =
         this.zip(other).filter { it.first == it.second }
@@ -37,6 +38,11 @@ fun <T> MutableList<T>.update(from: T, to: T?) {
             this[index] = to
         }
     }
+}
+
+fun <T> Set<T>.split(predicate: (T) -> Boolean): Pair<Set<T>, Set<T>> {
+    val filtered = this.filter(predicate).toSet()
+    return filtered to this - filtered
 }
 
 fun Char.asDigit() = if (isDigit()) (this - '0').toByte() else throw IllegalArgumentException()
