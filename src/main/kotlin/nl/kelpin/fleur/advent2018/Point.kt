@@ -31,3 +31,8 @@ data class Point3D(val x: Int, val y: Int, val z: Int) {
                 z * other.x - x * other.z,
                 x * other.y - y * other.x)
 }
+
+data class PointN(val values: List<Int>) {
+    fun distanceTo(other: PointN): Int =
+            values.zip(other.values).sumBy{(a, b) -> Math.abs(a - b)}
+}
