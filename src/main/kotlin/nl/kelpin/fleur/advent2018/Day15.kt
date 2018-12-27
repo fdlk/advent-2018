@@ -1,7 +1,5 @@
 package nl.kelpin.fleur.advent2018
 
-import java.util.*
-
 class Day15(val input: List<String>) {
     val cave: List<String> = input.map {
         it.map {
@@ -46,47 +44,27 @@ class Day15(val input: List<String>) {
 
     fun Point.isInRange(other: Point): Boolean = distanceTo(other) == 1
 
-    tailrec fun findFirstStep(comeFrom: Map<Point, Point>, current: Point, start: Point): Point = when {
-        (current == start) -> start
-        (comeFrom[current] == start) -> current
-        else -> findFirstStep(comeFrom, comeFrom[current]!!, start)
-    }
-
-    tailrec fun closestTarget(current: Set<Point>, targets: Set<Point>, ignore: Set<Point> = current): Point? {
-        val nextGen = current
-                .flatMap(::neighbors)
-                .filter { !ignore.contains(it) }
-                .toSet()
-        if (nextGen.isEmpty()) return null
-        val found = nextGen.filter { reached -> targets.any { reached.isInRange(it) } }.toSet()
-        if (!found.isEmpty()) return found.sortedWith(pointComparison).first()
-        return closestTarget(nextGen, targets, ignore + current)
-    }
-
     fun move(critter: Critter, targets: Set<Point>, occupied: Set<Point>): Point {
-        val closestTarget = closestTarget(setOf(critter.location), targets, occupied + critter.location)
-        if (closestTarget == null || closestTarget == critter.location) return critter.location
-        val open: Deque<Point> = ArrayDeque()
-        val closed: MutableList<Point> = mutableListOf()
-        var current: Point = critter.location
-        val comeFrom: MutableMap<Point, Point> = mutableMapOf()
-        if (targets.any { current.isInRange(it) }) return current
-        do {
-            if (!open.isEmpty()) {
-                current = open.poll()
-            }
-            val next = neighbors(current)
-                    .filter { !occupied.contains(it) }
+        if (targets.any { critter.location.isInRange(it) }) return critter.location
+        val closed: MutableSet<Point> = (occupied + critter.location).toMutableSet()
+        // maps point reached to the first step taken to get there
+        var current: Map<Point, Point> = neighbors(critter.location).filter { !closed.contains(it) }.map { it to it }.toMap()
+        while (!current.isEmpty()) {
+            val goalReached: Point? = current.keys
+                    .filter { targets.any { target -> target.isInRange(it) } }
+                    .minWith(pointComparison)
+            if (goalReached != null) return current[goalReached]!!
+            closed.addAll(current.keys)
+            val nextSteps = current.flatMap {
+                (location, firstStep) -> neighbors(location)
                     .filter { !closed.contains(it) }
-                    .filter { !open.contains(it) }
-            comeFrom.putAll(next.associateWith { current })
-            if (next.contains(closestTarget)) {
-                // reconstruct path
-                return findFirstStep(comeFrom, closestTarget, critter.location)
+                    .map { it to firstStep }
             }
-            next.forEach { open.offerLast(it) }
-            closed.add(current)
-        } while (!open.isEmpty())
+            // pick preferred first step when merging the options into a map
+            current = nextSteps
+                    .groupBy { it.first }
+                    .mapValues { it.value.map { it.second }.minWith(pointComparison)!! }
+        }
         return critter.location
     }
 

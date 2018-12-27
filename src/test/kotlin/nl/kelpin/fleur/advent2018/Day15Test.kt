@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 
 class Day15Test {
     val actual = Day15(resourceAsList("day15.txt"))
-    val sampleClosest = Day15(resourceAsList("day15-sample-closest.txt"))
     val sample0 = Day15(resourceAsList("day15-sample0.txt"))
     val sample = Day15(resourceAsList("day15-sample.txt"))
     val sample2 = Day15(resourceAsList("day15-sample2.txt"))
@@ -43,13 +42,6 @@ class Day15Test {
         val elf = Day15.Critter(Point(0, 0), 'E')
         val gobber = Day15.Critter(Point(1, 0), 'G')
         assertThat(gobber.attackedBy(elf)).isEqualTo(gobber.copy(hitPoints = 197))
-    }
-
-    @Test
-    fun `closestTarget`() {
-        val gnomes = sampleClosest.initialCritters.filter { it.type == 'G' }
-        val closestTarget = sampleClosest.closestTarget(gnomes.map { it.location }.toSet(), gnomes.map { it.location }.toSet())
-        assertThat(closestTarget).isEqualTo(Point(3, 1))
     }
 
     @Test
