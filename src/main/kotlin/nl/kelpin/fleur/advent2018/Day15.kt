@@ -55,10 +55,10 @@ class Day15(val input: List<String>) {
                     .minWith(pointComparison)
             if (goalReached != null) return current[goalReached]!!
             closed.addAll(current.keys)
-            val nextSteps = current.flatMap {
-                (location, firstStep) -> neighbors(location)
-                    .filter { !closed.contains(it) }
-                    .map { it to firstStep }
+            val nextSteps = current.flatMap { (location, firstStep) ->
+                neighbors(location)
+                        .filter { !closed.contains(it) }
+                        .map { it to firstStep }
             }
             // pick preferred first step when merging the options into a map
             current = nextSteps
@@ -66,17 +66,6 @@ class Day15(val input: List<String>) {
                     .mapValues { it.value.map { it.second }.minWith(pointComparison)!! }
         }
         return critter.location
-    }
-
-    private fun MutableList<Critter>.replaceIfPresent(target: Critter, molestedTarget: Critter?) {
-        val targetIndex = indexOf(target)
-        if (targetIndex >= 0) {
-            if (molestedTarget == null) {
-                removeAt(targetIndex)
-            } else {
-                this[targetIndex] = molestedTarget
-            }
-        }
     }
 
     fun nextRound(critters: Set<Critter>): Pair<Boolean, Set<Critter>> {
@@ -94,8 +83,8 @@ class Day15(val input: List<String>) {
             val target = enemies.filter { it.location.isInRange(movedCritter.location) }.sortedWith(targetComparison).firstOrNull()
             if (target != null) {
                 val molestedTarget = target.attackedBy(movedCritter)
-                todo.replaceIfPresent(target, molestedTarget)
-                done.replaceIfPresent(target, molestedTarget)
+                todo.update(target, molestedTarget)
+                done.update(target, molestedTarget)
             }
             done.add(movedCritter)
         }
@@ -106,9 +95,9 @@ class Day15(val input: List<String>) {
         var critters = initialCritters
         var i = 0
         while (critters.map { it.type }.distinct().size == 2) {
-            val next = nextRound(critters)
-            critters = next.second
-            if (!next.first) i++
+            val (incompleteRound, nextCritters) = nextRound(critters)
+            critters = nextCritters
+            if (!incompleteRound) i++
         }
         return Pair(i, critters)
     }
@@ -130,6 +119,5 @@ class Day15(val input: List<String>) {
             }
             attackPower++
         }
-
     }
 }
