@@ -23,7 +23,7 @@ class Day20 {
                 'N', 'S', 'E', 'W' -> when {
                     opposite(c) == current.lastOrNull() -> current = current.dropLast(1)
                     else -> {
-                        current = current + c
+                        current += c
                         if(current.length >= 1000){
                             deepRooms.add(current)
                         }

@@ -41,22 +41,18 @@ class Day23(input: List<String>) {
                 zs.split().map { newZs -> Box(newXs, newYs, newZs) }
             }
         }.toSet()
-
-        fun stretch(factor: Float): Box = Box(xs.stretch(factor), ys.stretch(factor), zs.stretch(factor))
     }
 
     val overlappingSpheres = { box: Box -> spheres.count(box::overlaps) }.memoize()
 
-    tailrec fun initialBox(box: Box = Box(spheres.map { it.pos.x }.range(),
+    val initialBox = Box(spheres.map { it.pos.x }.range(),
             spheres.map { it.pos.y }.range(),
-            spheres.map { it.pos.z }.range())): Box =
-            if (overlappingSpheres(box) == spheres.size) box
-            else initialBox(box.stretch(1.1f))
+            spheres.map { it.pos.z }.range())
 
     fun part2(): Int? {
         val queue: PriorityQueue<Box> = PriorityQueue(
                 compareByDescending(overlappingSpheres).then(compareBy { it.distanceFrom(origin) }))
-        queue.add(initialBox())
+        queue.add(initialBox)
         while (!queue.isEmpty()) {
             val box = queue.poll()
             println("overlaps = ${overlappingSpheres(box)}, size = ${box.dimension()}")

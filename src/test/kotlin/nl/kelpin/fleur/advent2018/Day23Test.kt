@@ -40,7 +40,7 @@ class Day23Test {
 
     @Test
     fun `initial Box Overlaps`() {
-        assertThat(actual.overlappingSpheres(actual.initialBox())).isEqualTo(1000)
+        assertThat(actual.overlappingSpheres(actual.initialBox)).isEqualTo(1000)
     }
 
     @Test
