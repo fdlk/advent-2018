@@ -15,7 +15,7 @@ class Day22Test {
 
     @Test
     fun `Solution part 1`(){
-        assertThat(actual.part1()).isEqualTo(114)
+        assertThat(actual.part1()).isEqualTo(8735)
     }
 
     @Test
