@@ -1,16 +1,18 @@
 package nl.kelpin.fleur.advent2018
 
+import java.util.*
+
 class Day15(val input: List<String>) {
     val cave: List<String> = input.map {
-        it.map {
-            when (it) {
+        it.map { c ->
+            when (c) {
                 '#' -> '#'
                 else -> '.'
             }
         }.joinToString("")
     }
-    val xRange: IntRange = 0 until cave[0].length
-    val yRange: IntRange = 0 until cave.size
+    val xRange: IntRange = cave[0].indices
+    val yRange: IntRange = cave.indices
     val initialCritters = input.mapIndexed { y, line ->
         line.mapIndexed { x, c ->
             when (c) {
@@ -20,17 +22,18 @@ class Day15(val input: List<String>) {
         }
     }.flatten().filterNotNull().toSet()
     val critterComparison = compareBy<Critter>({ it.location.y }, { it.location.x })
-    val targetComparison = compareBy<Critter>({ it.hitPoints }, { it.location.y }, { it.location.x })
-    val pointComparison = compareBy<Point>({ it.y }, { it.x })
+    private val targetComparison = compareBy<Critter>({ it.hitPoints }, { it.location.y }, { it.location.x })
+    private val pointComparison = compareBy<Point>({ it.y }, { it.x })
 
     fun isOpenCave(p: Point): Boolean = with(p) { xRange.contains(x) && yRange.contains(y) && cave[y][x] == '.' }
     fun neighbors(p: Point): List<Point> = listOf(Up, Left, Right, Down).map { p.move(it) }.filter(::isOpenCave)
 
     data class Critter(val location: Point, val type: Char, val hitPoints: Int = 200, val attackPower: Int = 3) {
-        fun attackedBy(other: Critter): Critter? {
-            val leftoverHitPoints = this.hitPoints - other.attackPower
-            return if (leftoverHitPoints > 0) copy(hitPoints = leftoverHitPoints) else null
-        }
+        fun attackedBy(other: Critter): Critter? =
+                Optional.of(this.hitPoints - other.attackPower)
+                        .filter { it > 0 }
+                        .map { copy(hitPoints = it) }
+                        .orElse(null)
     }
 
     fun mapWith(critters: Set<Critter>): String = xRange.map { y ->
@@ -42,13 +45,13 @@ class Day15(val input: List<String>) {
         }.joinToString("")
     }.joinToString("\n")
 
-    fun Point.isInRange(other: Point): Boolean = distanceTo(other) == 1
+    private fun Point.isInRange(other: Point): Boolean = distanceTo(other) == 1
 
-    fun move(critter: Critter, targets: Set<Point>, occupied: Set<Point>): Point {
-        if (targets.any { critter.location.isInRange(it) }) return critter.location
-        val closed: MutableSet<Point> = (occupied + critter.location).toMutableSet()
+    fun move(location: Point, targets: Set<Point>, occupied: Set<Point>): Point {
+        if (targets.any { location.isInRange(it) }) return location
+        val closed: MutableSet<Point> = (occupied + location).toMutableSet()
         // maps point reached to the first step taken to get there
-        var current: Map<Point, Point> = neighbors(critter.location).filter { !closed.contains(it) }.map { it to it }.toMap()
+        var current: Map<Point, Point> = neighbors(location).filter { !closed.contains(it) }.map { it to it }.toMap()
         while (!current.isEmpty()) {
             val goalReached: Point? = current.keys
                     .filter { targets.any { target -> target.isInRange(it) } }
@@ -57,7 +60,7 @@ class Day15(val input: List<String>) {
             closed.addAll(current.keys)
             val nextSteps = current.flatMap { (location, firstStep) ->
                 neighbors(location)
-                        .filter { !closed.contains(it) }
+                        .filterNot { closed.contains(it) }
                         .map { it to firstStep }
             }
             // pick preferred first step when merging the options into a map
@@ -65,7 +68,7 @@ class Day15(val input: List<String>) {
                     .groupBy { it.first }
                     .mapValues { it.value.map { it.second }.minWith(pointComparison)!! }
         }
-        return critter.location
+        return location
     }
 
     fun nextRound(critters: Set<Critter>): Pair<Boolean, Set<Critter>> {
@@ -79,7 +82,8 @@ class Day15(val input: List<String>) {
             if (enemies.isEmpty()) {
                 incompleteRound = true
             }
-            val movedCritter = critter.copy(location = move(critter, enemies.map { it.location }.toSet(), others.map { it.location }.toSet()))
+            val newLocation = move(critter.location, enemies.map { it.location }.toSet(), others.map { it.location }.toSet())
+            val movedCritter = critter.copy(location = newLocation)
             val target = enemies.filter { it.location.isInRange(movedCritter.location) }.sortedWith(targetComparison).firstOrNull()
             if (target != null) {
                 val molestedTarget = target.attackedBy(movedCritter)

@@ -7,8 +7,8 @@ class Day05(input: String) {
         private fun isPair(a: Char, b: Char): Boolean = abs(a - b) == 32
         private fun isStartOfPair(line: String, i: Int) = i < line.length - 1 && isPair(line[i], line[i + 1])
         tailrec fun replaced(line: String): String {
-            val index = line.indices.find { isStartOfPair(line, it) }
-            return if (index == null) line else replaced(line.filterIndexed { i, _ -> i !in (index..index + 1) })
+            val index = line.indices.find { isStartOfPair(line, it) } ?: return line
+            return replaced(line.filterIndexed { i, _ -> i !in (index..index + 1) })
         }
     }
 

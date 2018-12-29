@@ -5,12 +5,14 @@ class Day08(inputString: String) {
     val tree: Node = constructNode()
 
     data class Node(val children: List<Node>, val metadatas: List<Int>) {
-        fun metadataSum(): Int = metadatas.sum() + children.sumBy { it.metadataSum() }
-        fun value(): Int = if (children.isEmpty()) metadatas.sum()
-        else metadatas.map { children.getOrNull(it - 1) }.filterNotNull().map { it.value() }.sum()
+        fun metadataSum(): Int = metadatas.sum() + children.sumBy(Node::metadataSum)
+        fun value(): Int = if (children.isEmpty())
+            metadatas.sum()
+        else
+            metadatas.mapNotNull { children.getOrNull(it - 1) }.sumBy(Node::value)
     }
 
-    fun constructNode(): Node {
+    private fun constructNode(): Node {
         val numberOfChildren = input.next()
         val numberOfMetadatas = input.next()
         val children = (1..numberOfChildren).map { constructNode() }

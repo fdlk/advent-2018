@@ -2,13 +2,13 @@ package nl.kelpin.fleur.advent2018
 
 class Day18(val input: List<String>) {
 
-    fun insideGrid(point: Point, state: List<String>): Boolean = with(point) {
+    private fun insideGrid(point: Point, state: List<String>): Boolean = with(point) {
         (0 until state.size).contains(y) && (0 until state[0].length).contains(x)
     }
 
-    fun charAt(point: Point, state: List<String>): Char = with(point) { state[y][x] }
+    private fun charAt(point: Point, state: List<String>): Char = with(point) { state[y][x] }
 
-    fun neighbors(point: Point, state: List<String>): List<Char> = listOf(
+    private fun neighbors(point: Point, state: List<String>): List<Char> = listOf(
             point.move(Up).move(Left),
             point.move(Up),
             point.move(Up).move(Right),
@@ -20,23 +20,26 @@ class Day18(val input: List<String>) {
             .filter { insideGrid(it, state) }
             .map { charAt(it, state) }
 
-    fun nextChar(char: Char, point: Point, state: List<String>) = when (char) {
-        '.' -> when {
-            neighbors(point, state).count { it == '|' } >= 3 -> '|'
-            else -> '.'
+    private fun nextChar(char: Char, point: Point, state: List<String>): Char {
+        val neighborChars = neighbors(point, state).groupingBy { it }.eachCount()
+        return when (char) {
+            '.' -> when {
+                neighborChars.getOrDefault('|', 0) >= 3 -> '|'
+                else -> '.'
+            }
+            '|' -> when {
+                neighborChars.getOrDefault('#', 0) >= 3 -> '#'
+                else -> '|'
+            }
+            '#' -> when {
+                neighborChars.contains('#') && neighborChars.contains('|') -> '#'
+                else -> '.'
+            }
+            else -> throw IllegalStateException()
         }
-        '|' -> when {
-            neighbors(point, state).count { it == '#' } >= 3 -> '#'
-            else -> '|'
-        }
-        '#' -> when {
-            neighbors(point, state).contains('#') && neighbors(point, state).contains('|') -> '#'
-            else -> '.'
-        }
-        else -> throw IllegalStateException()
     }
 
-    fun states() = sequence {
+    private fun states() = sequence {
         var state = input
         while (true) {
             yield(state)
@@ -49,7 +52,10 @@ class Day18(val input: List<String>) {
     }
 
 
-    fun value(state: List<String>): Int = state.sumBy { it.count { it == '#' } } * state.sumBy { it.count { it == '|' } }
+    fun value(state: List<String>): Int {
+        val characters = state.map { it.toList() }.flatten().groupingBy { it }.eachCount()
+        return characters['#']!! * characters['|']!!
+    }
 
     fun part1(n: Int = 10): Int = value(states().drop(n).first())
 

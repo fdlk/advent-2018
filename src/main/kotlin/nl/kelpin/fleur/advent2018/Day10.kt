@@ -4,10 +4,8 @@ class Day10(input: List<String>) {
 
     data class Star(val position: Point, val velocity: Point) {
         companion object {
-            val starRE = Regex("""position=< ?(-?\d+), +(-?\d+)> velocity=< ?(-?\d+), +(-?\d+)>""")
-            fun of(notation: String): Star? = starRE
-                    .matchEntire(notation)
-                    ?.destructured
+            private val starRE = Regex("""position=< ?(-?\d+), +(-?\d+)> velocity=< ?(-?\d+), +(-?\d+)>""")
+            fun of(notation: String): Star? = starRE.matchEntire(notation)?.destructured
                     ?.let { (x, y, dx, dy) ->
                         Star(Point(x.toInt(), y.toInt()), Point(dx.toInt(), dy.toInt()))
                     }
@@ -26,9 +24,9 @@ class Day10(input: List<String>) {
         private fun yRange(): IntRange = stars.map { it.position.y }.range()
         fun area(): Long = xRange().length().toLong() * yRange().length().toLong()
         fun atTime(n: Int = 1): Chart = Chart(stars.map { it.atTime(n) })
-        override fun toString(): String = yRange().map { y ->
-            xRange().map { x -> charFor(Point(x, y)) }.toCharArray().joinToString("")
-        }.joinToString("\n")
+        override fun toString(): String = yRange().joinToString("\n") { y ->
+            xRange().joinToString("") { x -> charFor(Point(x, y)).toString() }
+        }
     }
 
     private val initialState: Chart = Chart.of(input)

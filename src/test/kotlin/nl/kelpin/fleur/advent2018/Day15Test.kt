@@ -50,7 +50,7 @@ class Day15Test {
         val elf = sample0.initialCritters.filter { it.type == 'E' }.first()
         val expected = elf.location.move(Up)
 
-        assertThat(sample0.move(elf, gnomes.map { it.location }.toSet(), emptySet())).isEqualTo(expected)
+        assertThat(sample0.move(elf.location, gnomes.map { it.location }.toSet(), emptySet())).isEqualTo(expected)
     }
 
     @Test
@@ -59,7 +59,7 @@ class Day15Test {
         val elves = sample0.initialCritters.filter { it.type == 'E' }
 
         assertThat(gnomes.take(3).map {
-            sample0.move(it, elves.map { it.location }.toSet(), gnomes.map { it.location }.toSet())
+            sample0.move(it.location, elves.map { it.location }.toSet(), gnomes.map { it.location }.toSet())
         }).isEqualTo(listOf(
                 Point(2, 1),
                 Point(4, 2),
@@ -67,7 +67,7 @@ class Day15Test {
     }
 
     @Test
-    fun `next`() {
+    fun next() {
         var critters = sample0.initialCritters
         for (i in 1..47) {
             critters = sample0.nextRound(critters).second

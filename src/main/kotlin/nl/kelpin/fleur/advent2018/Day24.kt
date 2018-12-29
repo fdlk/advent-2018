@@ -98,12 +98,12 @@ class Day24(immune: List<String>, infection: List<String>) {
         fun done(): Boolean = groups.map { it.side }.distinct().size == 1
 
         fun next(): State {
-            val targetSelection = targetSelection()
+            val selectedTargets = targetSelection()
             val attackers = groups.sortedWith(highestInitiative).toMutableList()
             val result = groups.toMutableList()
             while (!attackers.isEmpty()) {
                 val attacker = attackers.removeAt(0)
-                val target = targetSelection[attacker.getId()] ?: continue
+                val target = selectedTargets[attacker.getId()] ?: continue
                 val attackedTarget = target.attackedBy(attacker)
                 result.update(target, attackedTarget)
                 attackers.update(target, attackedTarget)

@@ -3,6 +3,7 @@ package nl.kelpin.fleur.advent2018
 import kotlin.reflect.KFunction3
 
 typealias Operation = KFunction3<Int, Int, List<Int>, Int>
+typealias OpCode = Int
 
 class Day16(samples: List<String>, val program: List<String>) {
     companion object {
@@ -37,29 +38,39 @@ class Day16(samples: List<String>, val program: List<String>) {
             }
         }
 
-        fun operations() = operations.filter(::matchesOperation)
+        fun isAmbiguous(): Boolean = operations.count(::matchesOperation) >= 3
         fun matchesOperation(operation: Operation) = operation(a, b, r) == output
     }
 
-    val samples: List<Sample> = samples.windowed(3, 4).map { Sample.of(it) }
+    private fun matchingOperations(samples: Collection<Sample>, operations: Collection<Operation>): List<Operation> =
+            operations.filter { operation -> samples.all { it.matchesOperation(operation) } }
 
-    fun part1(): Int = samples.count { it.operations().size >= 3 }
+    val samples: List<Sample> = samples.windowed(3, 4).map(Sample.Companion::of)
 
-    tailrec fun resolveMappings(soFar: Map<Int, Operation> = mapOf(),
-                                operations: Set<Operation> = Day16.operations.toSet(),
-                                opCodes: Set<Int> = samples.map { it.opcode }.toSet()): Map<Int, Operation> {
-        val possibleMappings = samples
+    fun part1(): Int = samples.count(Sample::isAmbiguous)
+
+    tailrec fun resolveMappings(soFar: Map<OpCode, Operation> = mapOf(),
+                                unmatchedOperations: Set<Operation> = Day16.operations.toSet(),
+                                unmatchedOpCodes: Set<OpCode> = samples.map { it.opcode }.toSet()): Map<OpCode, Operation> {
+        val newlyMatched = samples
                 .groupBy { it.opcode }
-                .filterKeys { opCodes.contains(it) }
-                .mapValues { opcodeSamples -> operations.filter { operation -> opcodeSamples.value.all { it.matchesOperation(operation) } } }
-        val new = possibleMappings.filterValues { it.size == 1 }.map { it.key to it.value.first() }.toMap()
-        return if (new.isEmpty()) soFar else resolveMappings(soFar + new, operations - soFar.values, opCodes)
+                .filterKeys { unmatchedOpCodes.contains(it) }
+                .mapValues { opcodeSamples -> matchingOperations(opcodeSamples.value, unmatchedOperations) }
+                .filterValues { it.size == 1 }
+                .mapValues { it.value.first() }
+        if (newlyMatched.isEmpty()) {
+            return soFar
+        }
+        return resolveMappings(soFar + newlyMatched,
+                unmatchedOperations - newlyMatched.values,
+                unmatchedOpCodes - newlyMatched.keys)
     }
 
     fun part2(): Int {
         val instructionsByOpcode = resolveMappings()
+        val instructions = program.map { line -> line.split(" ").map { it.toInt() } }
         val registry = mutableListOf(0, 0, 0, 0)
-        program.map { it.split(" ").map { it.toInt() } }.forEach { (opcode, a, b, c) ->
+        instructions.forEach { (opcode, a, b, c) ->
             registry[c] = instructionsByOpcode[opcode]!!(a, b, registry)
         }
         return registry[0]

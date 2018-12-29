@@ -16,7 +16,7 @@ class Day04(input: List<String>) {
         private val beginShiftRE = Regex(""".*Guard #(\d+) begins shift""")
         private val fallAsleepRE = Regex(""".*00:(\d{2})] falls asleep""")
         private val wakesUpRE = Regex(""".*00:(\d{2})] wakes up""")
-        private fun MatchResult.intMatch(): Int = destructured.component1().toInt()
+        private fun MatchResult.intMatch(): Int = destructured.let{ (firstResult) -> firstResult.toInt() }
 
         fun processLine(status: State, line: String): State = when {
             line.matches(beginShiftRE) -> beginShiftRE.find(line)!!.intMatch().run(status::beginShift)

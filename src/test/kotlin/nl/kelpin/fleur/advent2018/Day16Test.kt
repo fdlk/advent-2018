@@ -19,7 +19,7 @@ class Day16Test {
     @Test
     fun `Sample is ambiguous`() {
         val sample = Day16.Sample.of(listOf("Before: [3, 2, 1, 1]","9 2 1 2","After:  [3, 2, 2, 1]"))
-        assertThat(sample.operations().count()).isEqualTo(3)
+        assertThat(sample.isAmbiguous()).isTrue()
     }
 
     @Test

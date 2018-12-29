@@ -1,6 +1,6 @@
 package nl.kelpin.fleur.advent2018
 
-class Day11(val gridSerialNumber: Int) {
+class Day11(private val gridSerialNumber: Int) {
     fun powerLevel(point: Point): Int =
             with(point) {
                 val rackID = x + 10
@@ -14,7 +14,7 @@ class Day11(val gridSerialNumber: Int) {
                 (0 until n).map { dy ->
                     topLeft.plus(Point(dx, dy))
                 }
-            }.map(::powerLevel).sum()
+            }.sumBy(::powerLevel)
 
     fun part1(): Point? = (1..298).flatMap{x -> (1..298).map{y -> Point(x, y)}}.maxBy{totalPower(it)}
 

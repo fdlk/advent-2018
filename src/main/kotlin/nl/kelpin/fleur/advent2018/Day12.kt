@@ -1,46 +1,44 @@
 package nl.kelpin.fleur.advent2018
 
-class Day12(val initialState: String, val rules: Map<String, Char>) {
+class Day12(val initialState: State, val rules: Map<String, Char>) {
     companion object {
-        fun of(input: List<String>): Day12 = Day12(input[0],
+        fun of(input: List<String>): Day12 = Day12(State(input[0], 0),
                 input.drop(1).map { it.split(" => ") }.map { it[0] to it[1][0] }.toMap())
     }
 
-    fun next(state: String, indexOfFirstPot: Int): Pair<String, Int> {
-        val mapped = ("....$state....").windowed(5).map { rules.getOrDefault(it, '.') }
-        return mapped.dropWhile { it == '.' }.dropLastWhile { it == '.' }.joinToString("") to
-                indexOfFirstPot - 2 + mapped.indexOf('#')
+    data class State(val pots: String, val indexOfFirstPot: Long) {
+        fun value(): Long =
+                pots.toCharArray().foldIndexed(0L) { pot: Int, sum: Long, c: Char ->
+                    if (c != '#') sum else sum + pot + indexOfFirstPot
+                }
     }
 
-    fun value(state: String, indexOfFirstPot: Long): Long =
-            state.toCharArray().foldIndexed(0L) { pot: Int, sum: Long, c: Char ->
-        if (c == '#') sum + pot + indexOfFirstPot else sum
+    fun State.next(): State {
+        val mapped = ("....$pots....").windowed(5).map { rules.getOrDefault(it, '.') }
+        return State(mapped.dropWhile { it == '.' }
+                .dropLastWhile { it == '.' }
+                .joinToString(""), indexOfFirstPot - 2 + mapped.indexOf('#'))
     }
 
-    fun part1(): Int {
+
+    fun part1(): Long {
         var state = initialState
-        var index = 0
-        repeat(20) {
-            val nextGen = next(state, index)
-            state = nextGen.first
-            index = nextGen.second
+        repeat(20){
+            state = state.next()
         }
-        return value(state, index.toLong()).toInt()
+        return state.value()
     }
 
     fun part2(): Long {
         var state = initialState
-        var previousState: String
-        var index = 0
+        var previousState: State
         var iteration = 0
         do {
-            val nextGen = next(state, index)
             previousState = state
-            state = nextGen.first
-            index = nextGen.second
+            state = state.next()
             iteration++
-        } while(! state.equals(previousState))
-        return value(state, 50000000000 - iteration + index)
+        } while (state.pots != previousState.pots)
+        return state.copy(indexOfFirstPot = 50000000000 - iteration + state.indexOfFirstPot).value()
     }
 }
 

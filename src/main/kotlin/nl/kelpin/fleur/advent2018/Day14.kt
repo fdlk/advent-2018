@@ -17,5 +17,5 @@ class Day14 {
 
     fun part1(n: Int): String = scores.drop(n).take(10).joinToString("")
 
-    fun part2(input: String): Int = scores.windowed(input.length).indexOf(input.toCharArray().map(Char::asDigit))
+    fun part2(input: String): Int = scores.windowed(input.length).indexOf(input.map(Char::asDigit))
 }

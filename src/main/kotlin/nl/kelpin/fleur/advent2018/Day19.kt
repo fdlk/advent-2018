@@ -20,7 +20,7 @@ class Day19(val program: List<String>, val ipReg: Int) {
         private fun eqrr(a: Int, b: Int, r: List<Int>): Int = if (r[a] == r[b]) 1 else 0
     }
 
-    fun update(regs: List<Int>, indexToUpdate: Int, updatedValue: Int): List<Int> = regs.mapIndexed { index, value ->
+    private fun update(regs: List<Int>, indexToUpdate: Int, updatedValue: Int): List<Int> = regs.mapIndexed { index, value ->
         if (index == indexToUpdate) updatedValue
         else value
     }
@@ -56,6 +56,6 @@ class Day19(val program: List<String>, val ipReg: Int) {
         }
     }
 
-    fun part1() = regses(listOf(0, 0, 0, 0, 0, 0)).last().get(0)
+    fun part1() = regses(listOf(0, 0, 0, 0, 0, 0)).last()[0]
     fun part2() = (1..10551394).filter { 10551394 % it == 0 }.sum()
 }

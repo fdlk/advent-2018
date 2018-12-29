@@ -52,21 +52,14 @@ class Day17(input: List<String>) {
         else -> ' '
     }
 
-    fun map(): String = yRange
-            .map { y -> xRange.map { x -> Point(x, y) }.map(::charFor).joinToString("") }
-            .joinToString("\n")
+    fun map(): String = yRange.joinToString("\n") { y -> xRange.map { x -> Point(x, y) }.map(::charFor).joinToString("") }
 
-    private fun isSupported(point: Point): Boolean {
-        val below = point.move(Down)
-        return isClay(below) || waters.any { it.contains(below) }
-    }
+    private fun isSupported(point: Point): Boolean = clays.union(waters).any { it.contains(point.move(Down)) }
 
-    private fun isClay(point: Point): Boolean {
-        return clays.any { it.contains(point) }
-    }
+    private fun isClay(point: Point): Boolean = clays.any { it.contains(point) }
 
     // the point where a tap hits a supporting surface
-    data class Pok(val point: Point, val leftUnsupported: Int, val leftNoClay: Int, val rightUnsupported: Int, val rightNoClay: Int){
+    data class Pok(val point: Point, val leftUnsupported: Int, val leftNoClay: Int, val rightUnsupported: Int, val rightNoClay: Int) {
         fun supportedWater(): Horizontal? {
             if (leftNoClay > leftUnsupported && rightNoClay < rightUnsupported) {
                 return Horizontal(leftNoClay + 1 until rightNoClay, point.y)
@@ -89,7 +82,7 @@ class Day17(input: List<String>) {
         }
     }
 
-    fun pok(tap: Point): Pok? {
+    private fun pok(tap: Point): Pok? {
         val pok = (tap.y..yRange.endInclusive)
                 .map { tap.copy(y = it) }
                 .find(::isSupported) ?: return null
@@ -128,7 +121,7 @@ class Day17(input: List<String>) {
     }
 
     private fun addFlowingWaters() {
-        for(tap in inactiveTaps){
+        for (tap in inactiveTaps) {
             val pok = pok(tap)
             spouts.add(Vertical(tap.x, tap.y until (pok?.point?.y ?: yRange.endInclusive+1)))
             if (pok != null) {

@@ -8,15 +8,10 @@ class Day12Test {
     val sample = Day12.of(resourceAsList("day12-sample.txt"))
 
     @Test
-    fun `of`() {
-        assertThat(sample.initialState).isEqualTo("#..#.#..##......###...###")
+    fun of() {
+        assertThat(sample.initialState).isEqualTo(Day12.State("#..#.#..##......###...###", 0))
         assertThat(sample.rules.size).isEqualTo(14)
         assertThat(sample.rules.toList().contains(".####" to '#'))
-    }
-
-    @Test
-    fun `next`() {
-        assertThat(sample.next(sample.initialState, 0)).isEqualTo("#...#....#.....#..#..#..#" to 0)
     }
 
     @Test
