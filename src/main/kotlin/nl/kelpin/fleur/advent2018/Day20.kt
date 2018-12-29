@@ -1,6 +1,7 @@
 package nl.kelpin.fleur.advent2018
 
 import java.util.*
+import kotlin.math.max
 
 class Day20 {
     companion object {
@@ -27,7 +28,7 @@ class Day20 {
                         if(current.length >= 1000){
                             deepRooms.add(current)
                         }
-                        maxDepth = Math.max(maxDepth, current.length)
+                        maxDepth = max(maxDepth, current.length)
                     }
                 }
                 '(' -> stack.push(current)

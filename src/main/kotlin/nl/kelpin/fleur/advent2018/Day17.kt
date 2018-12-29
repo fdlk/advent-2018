@@ -1,5 +1,8 @@
 package nl.kelpin.fleur.advent2018
 
+import kotlin.math.max
+import kotlin.math.min
+
 sealed class Soil {
     abstract fun contains(point: Point): Boolean
 }
@@ -71,7 +74,7 @@ class Day17(input: List<String>) {
             return null
         }
 
-        fun flowingWater(): Horizontal = Horizontal(Math.max(leftUnsupported, leftNoClay + 1)..Math.min(rightUnsupported, rightNoClay - 1), point.y)
+        fun flowingWater(): Horizontal = Horizontal(max(leftUnsupported, leftNoClay + 1)..min(rightUnsupported, rightNoClay - 1), point.y)
 
         fun taps(): List<Point> {
             val result = mutableListOf<Point>()

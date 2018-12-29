@@ -1,10 +1,12 @@
 package nl.kelpin.fleur.advent2018
 
+import kotlin.math.abs
+
 data class Point(val x: Int, val y: Int) {
     constructor(string: String) : this(string.split(",").map(String::trim).map(String::toInt))
     constructor(list: List<Int>) : this(list[0], list[1])
 
-    fun distanceTo(other: Point): Int = Math.abs(other.x - x) + Math.abs(other.y - y)
+    fun distanceTo(other: Point): Int = abs(other.x - x) + abs(other.y - y)
     fun plus(other: Point): Point = Point(x + other.x, y + other.y)
     fun times(n: Int): Point = Point(x * n, y * n)
     fun move(d: Direction): Point = when (d) {
@@ -22,7 +24,7 @@ object Left : Direction()
 object Right : Direction()
 
 data class Point3D(val x: Int, val y: Int, val z: Int) {
-    fun distanceTo(other: Point3D): Int = Math.abs(other.x - x) + Math.abs(other.y - y) + Math.abs(other.z - z)
+    fun distanceTo(other: Point3D): Int = abs(other.x - x) + abs(other.y - y) + abs(other.z - z)
     fun plus(other: Point3D): Point3D = Point3D(x + other.x, y + other.y, z + other.z)
     fun minus(other: Point3D): Point3D = plus(other.times(-1))
     fun div(n: Int) = Point3D(x / n, y / n, z / n)
@@ -34,5 +36,5 @@ data class Point3D(val x: Int, val y: Int, val z: Int) {
 
 data class PointN(val values: List<Int>) {
     fun distanceTo(other: PointN): Int =
-            values.zip(other.values).sumBy{(a, b) -> Math.abs(a - b)}
+            values.zip(other.values).sumBy{(a, b) -> abs(a - b)}
 }

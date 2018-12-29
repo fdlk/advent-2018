@@ -1,8 +1,10 @@
 package nl.kelpin.fleur.advent2018
 
+import kotlin.math.abs
+
 class Day05(input: String) {
     companion object {
-        private fun isPair(a: Char, b: Char): Boolean = Math.abs(a - b) == 32
+        private fun isPair(a: Char, b: Char): Boolean = abs(a - b) == 32
         private fun isStartOfPair(line: String, i: Int) = i < line.length - 1 && isPair(line[i], line[i + 1])
         tailrec fun replaced(line: String): String {
             val index = line.indices.find { isStartOfPair(line, it) }
